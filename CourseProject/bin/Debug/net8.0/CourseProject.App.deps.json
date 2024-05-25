@@ -1,0 +1,62 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "CourseProject.App/1.0.0": {
+        "dependencies": {
+          "CourseProject.Service": "1.0.0"
+        },
+        "runtime": {
+          "CourseProject.App.dll": {}
+        }
+      },
+      "CourseProject.Core/1.0.0": {
+        "runtime": {
+          "CourseProject.Core.dll": {}
+        }
+      },
+      "CourseProject.Data/1.0.0": {
+        "dependencies": {
+          "CourseProject.Core": "1.0.0"
+        },
+        "runtime": {
+          "CourseProject.Data.dll": {}
+        }
+      },
+      "CourseProject.Service/1.0.0": {
+        "dependencies": {
+          "CourseProject.Data": "1.0.0"
+        },
+        "runtime": {
+          "CourseProject.Service.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CourseProject.App/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CourseProject.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CourseProject.Data/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CourseProject.Service/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
