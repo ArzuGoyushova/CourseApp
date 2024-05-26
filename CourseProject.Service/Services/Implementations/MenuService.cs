@@ -29,16 +29,16 @@ namespace CourseProject.Service.Services.Implementations
                         await SubMenuAsync(groupService);
                         break;
                     case 2:
+                        ISubjectService subjectService = new SubjectService();
+                        await SubMenuAsync(subjectService);
+                        break;
+                    case 3:
                         IStudentService studentService = new StudentService();
                         await SubMenuAsync(studentService);
                         break;
-                    case 3:
+                    case 4:
                         ITeacherService teacherService = new TeacherService();
                         await SubMenuAsync(teacherService);
-                        break;
-                    case 4:
-                        ISubjectService subjectService = new SubjectService();
-                        await SubMenuAsync(subjectService);
                         break;
                     case 0:
                         isContinue = false;
@@ -96,6 +96,9 @@ namespace CourseProject.Service.Services.Implementations
                     case 7:
                         await studentService.GetStudentGradesAsync();
                         break;
+                    case 8:
+                        await studentService.GetStudentGPAAsync();
+                        break;
                     case 0:
                         isContinue = false;
                         break;
@@ -110,22 +113,29 @@ namespace CourseProject.Service.Services.Implementations
 
         public static void PrintMenu()
         {
-            Helper.HelperMessage(ConsoleColor.Cyan, "---------------------------------------------COURSE APPLICATION-------------------------------------------");
+            Console.WriteLine();
+            Helper.HelperMessage(ConsoleColor.Cyan, "|>---------COURSE APPLICATION--------<|");
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Yellow;
             var t1 = new TablePrinter("1 - Group Menu");
-            t1.AddRow("2 - Student Menu");
-            t1.AddRow("3 - Teacher Menu");
-            t1.AddRow("4 - Subject Menu");
+            t1.AddRow("2 - Subject Menu");
+            t1.AddRow("3 - Student Menu");
+            t1.AddRow("4 - Teacher Menu");
             t1.AddRow("0 - EXIT");
            
             t1.PrintMenu();
 
             Console.ResetColor();
-            Helper.HelperMessage(ConsoleColor.Cyan, "-----------------------------------------------------------------------------------------------------------");
+
+            Console.WriteLine();
+            Helper.HelperMessage(ConsoleColor.Cyan, "|>------------------------------------<|");
+            Console.WriteLine();
         }
         public static void PrintSubMenu(string type)
         {
-            Helper.HelperMessage(ConsoleColor.Cyan, "---------------------------------------------COURSE APPLICATION-------------------------------------------");
+            Console.WriteLine();
+            Helper.HelperMessage(ConsoleColor.Cyan, "|>---------COURSE APPLICATION--------<|");
+            Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Yellow;
             string result = type.ToLower();
 
@@ -133,11 +143,12 @@ namespace CourseProject.Service.Services.Implementations
             t1.AddRow($"2 - Update {type}");
             t1.AddRow($"3 - Delete {type}");
             t1.AddRow($"4 - Get {type} by Id");
-            t1.AddRow($"5 - Get All {type}");
+            t1.AddRow($"5 - Get All {type}s");
             if (result=="student")
             {
                 t1.AddRow($"6 - Add {type} grade");
                 t1.AddRow($"7 - Get all {type} grades by Id");
+                t1.AddRow($"8 - Get {type} GPA by Id");
             }
             else if (result == "teacher")
             {
@@ -148,7 +159,9 @@ namespace CourseProject.Service.Services.Implementations
             t1.PrintMenu();
 
             Console.ResetColor();
-            Helper.HelperMessage(ConsoleColor.Cyan, "-----------------------------------------------------------------------------------------------------------");
+            Console.WriteLine();
+            Helper.HelperMessage(ConsoleColor.Cyan, "|>------------------------------------<|");
+            Console.WriteLine();
         }
     }
 }

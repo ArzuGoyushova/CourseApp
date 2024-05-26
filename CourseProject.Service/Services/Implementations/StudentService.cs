@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CourseProject.Core.Models;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace CourseProject.Service.Services.Implementations
 {
@@ -169,6 +170,7 @@ namespace CourseProject.Service.Services.Implementations
             };
             await _studentGradeRepository.AddAsync(studentGrade);
             student.Grades.Add(studentGrade);
+            Helper.HelperMessage(ConsoleColor.Green, StudentConstants.GradesAdded);
         }
         public async Task GetStudentGradesAsync()
         {
@@ -190,7 +192,26 @@ namespace CourseProject.Service.Services.Implementations
             }
             t.Print();
         }
+        public async Task GetStudentGPAAsync()
+        {
+        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int studentId);
+            Student student = await _studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                goto EnterStudentId;
+            }
+            ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
+            ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x => x.Student == student).ToList();
+            double gpa = filteredStudentGrades.Average(x => x.Grade);
+            
+            var t = new TablePrinter("Student Id", "Student Name", "GPA");
 
+            t.AddRow(student.Id, student.Name, gpa);
+            
+            t.Print();
+        }
         public async Task UpdateAsync()
         {
         EnterIdNumber: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);

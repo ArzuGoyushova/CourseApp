@@ -14,6 +14,7 @@ namespace CourseProject.Service.Utilities.Helper.Constants
         public const string EnterBirthday = "Please enter student's birthday: ";
         public const string EnterFinCode = "Please enter student's fin code: ";
         public const string EnterGrade = "Please enter student's grade (0-100): ";
+        public const string GradesAdded = "Grades added successfully.";
         public const string SuccesfullyCreated = "student is succesfully created.";
         public const string SuccesfullyDeleted = "Deleted succesfully.";
         public const string SuccesfullyUpdated = "Updated succesfully.";

@@ -169,6 +169,7 @@ namespace CourseProject.Service.Services.Implementations
                 updatedGroup.Description = desc;
                 updatedGroup.UpdatedDate = DateTime.Now;
                 await _groupRepository.UpdateAsync(updatedGroup);
+                Helper.HelperMessage(ConsoleColor.Green, $"{name} " + GroupConstants.SuccesfullyUpdated);
             }
         }
     }

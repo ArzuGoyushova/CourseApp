@@ -10,5 +10,6 @@ namespace CourseProject.Service.Services.Interfaces
     {
         public Task AddStudentGradesAsync();
         public Task GetStudentGradesAsync();
+        public Task GetStudentGPAAsync();
     }
 }
