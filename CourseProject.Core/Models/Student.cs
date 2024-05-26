@@ -10,6 +10,6 @@ namespace CourseProject.Core.Models
     public class Student : Person
     {
         public Group Group { get; set; }
-        public List<StudentGrade> Grades = new List<StudentGrade>();
+        public List<StudentGrade>? Grades { get; set; } = new List<StudentGrade>();
     }
 }

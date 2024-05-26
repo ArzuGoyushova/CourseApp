@@ -16,9 +16,13 @@ namespace CourseProject.Service.Services.Implementations
     public class TeacherService : ITeacherService
     {
         private readonly ITeacherRepository _teacherRepository;
+        private readonly IGroupRepository _groupRepository;
+        private readonly ITeacherGroupRepository _teacherGroupRepository;
         public TeacherService()
         {
             _teacherRepository = new TeacherRepository();
+            _groupRepository = new GroupRepository();
+            _teacherGroupRepository = new TeacherGroupRepository();
         }
         public async Task AddAsync()
         {
@@ -67,7 +71,6 @@ namespace CourseProject.Service.Services.Implementations
             };
             await _teacherRepository.AddAsync(teacher);
 
-
             Helper.HelperMessage(ConsoleColor.Green, $"{name} " + TeacherConstants.SuccesfullyCreated);
         }
 
@@ -94,7 +97,7 @@ namespace CourseProject.Service.Services.Implementations
 
             foreach (var teacher in await _teacherRepository.GetAllAsync())
             {
-                t.AddRow(teacher.Id, teacher.Name, teacher.Surname, teacher.Birthday.ToString("DD-MM-YYYY"), teacher.FinCode);
+                t.AddRow(teacher.Id, teacher.Name, teacher.Surname, teacher.Birthday.ToString("dd-MM-yyyy"), teacher.FinCode);
             }
             t.Print();
         }
@@ -113,10 +116,38 @@ namespace CourseProject.Service.Services.Implementations
             {
                 Helper.HelperMessage(ConsoleColor.Green, TeacherConstants.RequestedTeacher);
                 var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Fincode");
-                t.AddRow(teacher.Id, teacher.Name, teacher.Surname, teacher.Birthday.ToString("DD-MM-YYYY"), teacher.FinCode);
+                t.AddRow(teacher.Id, teacher.Name, teacher.Surname, teacher.Birthday.ToString("dd-MM-yyyy"), teacher.FinCode);
                 t.Print();
             }
 
+        }
+        public async Task AddTeacherGroupsAsync()
+        {
+        EnterTeacherId: Helper.HelperMessage(ConsoleColor.Magenta, TeacherConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int teacherId);
+            Teacher teacher = await _teacherRepository.GetByIdAsync(teacherId);
+            if (teacher == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, TeacherConstants.RequestedTeacherError);
+                goto EnterTeacherId;
+            }
+        EnterGroupId: Helper.HelperMessage(ConsoleColor.Magenta, GroupConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int groupId);
+            Group group = await _groupRepository.GetByIdAsync(groupId);
+            if (teacher == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, GroupConstants.RequestedGroupError);
+                goto EnterGroupId;
+            }
+            TeacherGroup teacherGroup = new()
+            {
+                Teacher = teacher,
+                Group = group,
+                CreatedDate = DateTime.Now,
+            };
+            await _teacherGroupRepository.AddAsync(teacherGroup);
+            teacher.TeacherGroups.Add(teacherGroup);
+            group.TeacherGroups.Add(teacherGroup);
         }
 
         public async Task UpdateAsync()

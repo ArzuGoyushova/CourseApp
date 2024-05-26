@@ -12,6 +12,6 @@ namespace CourseProject.Core.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public List<Student>? Students { get; set; } = new List<Student>();
-        public List<TeacherGroup>? TeacherGroups { get; set; }
+        public List<TeacherGroup>? TeacherGroups { get; set; } = new List<TeacherGroup> { };
     }
 }

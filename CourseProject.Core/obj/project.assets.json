@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseProject.Core\\CourseProject.Core.csproj",
+      "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseApp\\CourseProject.Core\\CourseProject.Core.csproj",
       "projectName": "CourseProject.Core",
-      "projectPath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseProject.Core\\CourseProject.Core.csproj",
+      "projectPath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseApp\\CourseProject.Core\\CourseProject.Core.csproj",
       "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseProject.Core\\obj\\",
+      "outputPath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseApp\\CourseProject.Core\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",

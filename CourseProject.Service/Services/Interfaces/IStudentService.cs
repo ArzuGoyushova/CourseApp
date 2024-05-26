@@ -8,5 +8,7 @@ namespace CourseProject.Service.Services.Interfaces
 {
     public interface IStudentService : IService
     {
+        public Task AddStudentGradesAsync();
+        public Task GetStudentGradesAsync();
     }
 }

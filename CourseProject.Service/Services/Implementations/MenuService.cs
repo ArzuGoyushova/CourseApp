@@ -54,20 +54,18 @@ namespace CourseProject.Service.Services.Implementations
         {
             bool isContinue = true;
             string type = service.GetType().Name.Split("Service")[0];
-            //bool result = service.GetType().ToString() == typeof(OrderService).ToString();
+    
 
             while (isContinue)
             {
                 PrintSubMenu(type);
 
-                //if (result)
-                //{
-                //    Console.Write($"6.Change Status {type}s\n");
-                //}
-
                 Console.Write("Enter operation number: ");
                 int.TryParse(Console.ReadLine(), out int step);
                 Console.Clear();
+
+                IStudentService studentService = new StudentService();
+                ITeacherService teacherService = new TeacherService();
 
                 switch (step)
                 {
@@ -85,6 +83,18 @@ namespace CourseProject.Service.Services.Implementations
                         break;
                     case 5:
                         await service.GetAllAsync();
+                        break;
+                    case 6:
+                        if (type.ToLower() == "student")
+                        {
+                            await studentService.AddStudentGradesAsync();
+                        } else if (type.ToLower() == "teacher")
+                        {
+                            await teacherService.AddTeacherGroupsAsync();
+                        }
+                        break;
+                    case 7:
+                        await studentService.GetStudentGradesAsync();
                         break;
                     case 0:
                         isContinue = false;
@@ -117,11 +127,22 @@ namespace CourseProject.Service.Services.Implementations
         {
             Helper.HelperMessage(ConsoleColor.Cyan, "---------------------------------------------COURSE APPLICATION-------------------------------------------");
             Console.ForegroundColor = ConsoleColor.Yellow;
+            string result = type.ToLower();
+
             var t1 = new TablePrinter($"1 - Add {type}");
             t1.AddRow($"2 - Update {type}");
             t1.AddRow($"3 - Delete {type}");
             t1.AddRow($"4 - Get {type} by Id");
             t1.AddRow($"5 - Get All {type}");
+            if (result=="student")
+            {
+                t1.AddRow($"6 - Add {type} grade");
+                t1.AddRow($"7 - Get all {type} grades by Id");
+            }
+            else if (result == "teacher")
+            {
+                t1.AddRow($"6 - Add {type} group");
+            }
             t1.AddRow($"0 - EXIT {type} Menu");
 
             t1.PrintMenu();

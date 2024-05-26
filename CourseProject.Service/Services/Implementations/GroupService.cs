@@ -62,20 +62,42 @@ namespace CourseProject.Service.Services.Implementations
         public async Task GetAllAsync()
         {
             var t1 = new TablePrinter("Id", "Name", "Description");
-            var t2 = new TablePrinter("Students");
-           
+            var t2 = new TablePrinter("Group ID", "Students");
+            var t3 = new TablePrinter("Group ID", "Teachers");
+
             foreach (var group in await _groupRepository.GetAllAsync())
             {
                 t1.AddRow(group.Id, group.Name, group.Description);
-                foreach (var student in group.Students)
+
+                if (group.Students != null && group.Students.Count != 0)
                 {
-                    t2.AddRow(student.Id + " - " + student.Surname + " " + student.Name);
+                    foreach (var student in group.Students)
+                    {
+                        t2.AddRow(group.Id, student.Id + " - " + student.Surname + " " + student.Name);
+                    }
                 }
-                
+                else
+                {
+                    t2.AddRow(group.Id, "No students");
+                }
+
+                if (group.TeacherGroups != null && group.TeacherGroups.Count != 0)
+                {
+                    foreach (var teacherGroup in group.TeacherGroups)
+                    {
+                        t3.AddRow(group.Id, teacherGroup.Teacher.Id + " - " + teacherGroup.Teacher.Name);
+                    }
+                }
+                else
+                {
+                    t3.AddRow(group.Id, "No teachers");
+                }
             }
+
             t1.Print();
-            t2.Print();
+            TablePrinter.PrintSideBySide(t2, t3);
         }
+
 
         public async Task GetAsync()
         {
@@ -93,18 +115,34 @@ namespace CourseProject.Service.Services.Implementations
                 var t1 = new TablePrinter("Id", "Name", "Description");
                 t1.AddRow(group.Id, group.Name, group.Description);
 
-                var t2 = new TablePrinter("Students");
+                var t2 = new TablePrinter("Group ID", "Students");
+                var t3 = new TablePrinter("Group ID", "Teachers");
 
-                if (group.Students != null)
+                if (group.Students.Count != 0)
                 {
                     foreach (var student in group.Students)
                     {
-                        t2.AddRow(student.Name);
+                        t2.AddRow(group.Id, student.Name);
+                    }
+                } else
+                {
+                    t2.AddRow(group.Id, "No students");
+                }
+                if (group.TeacherGroups.Count != 0)
+                {
+
+                    foreach (var teacherGroup in group.TeacherGroups)
+                    {
+                        t3.AddRow(group.Id, teacherGroup.Teacher.Id + " - " + teacherGroup.Teacher.Name);
                     }
                 }
-                
+                else
+                {
+                    t3.AddRow(group.Id, "No teachers");
+                }
+
                 t1.Print();
-                t2.Print();
+                TablePrinter.PrintSideBySide(t2, t3);
             }
 
         }

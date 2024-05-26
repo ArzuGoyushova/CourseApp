@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/f2YuDVyL6CH2I+G04Z7qO7rK2s6R8xUJ5P00VNSOpZw7PEZYUy/yJxTBCn8UvdgRTTmQa79k0fUvKMXp2KHQg==",
+  "dgSpecHash": "sQr+bPrVq3iv306aJPFOCOBU7FP0bSuKeYspffeQzZBbhukaXI0I1Co9T7ZWIZEl/LVpsH8kCOf9xoux93p5TA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseProject.Service\\CourseProject.Service.csproj",
+  "projectFilePath": "C:\\Users\\Administrator\\Desktop\\Homework-Back\\CourseApp\\CourseProject.Service\\CourseProject.Service.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

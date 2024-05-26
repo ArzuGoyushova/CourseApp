@@ -17,10 +17,14 @@ namespace CourseProject.Service.Services.Implementations
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IGroupRepository _groupRepository;
+        private readonly ISubjectRepository _subjectRepository;
+        private readonly IStudentGradeRepository _studentGradeRepository;
         public StudentService()
         {
             _studentRepository = new StudentRepository();
             _groupRepository = new GroupRepository();
+            _subjectRepository = new SubjectRepository();
+            _studentGradeRepository = new StudentGradeRepository();
         }
         public async Task AddAsync()
         {
@@ -107,7 +111,7 @@ namespace CourseProject.Service.Services.Implementations
 
             foreach (var student in await _studentRepository.GetAllAsync())
             {
-                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("DD-MM-YYYY"), student.Group.Name, student.FinCode);
+                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
             }
             t.Print();
         }
@@ -126,10 +130,65 @@ namespace CourseProject.Service.Services.Implementations
             {
                 Helper.HelperMessage(ConsoleColor.Green, StudentConstants.RequestedStudent);
                 var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Group Name", "Fincode");
-                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("DD-MM-YYYY"), student.Group.Name, student.FinCode);
+                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
                 t.Print();
             }
 
+        }
+        public async Task AddStudentGradesAsync()
+        {
+        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int studentId);
+            Student student = await _studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                goto EnterStudentId;
+            }
+        EnterSubjectId: Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int subjectId);
+            Subject subject = await _subjectRepository.GetByIdAsync(subjectId);
+            if (subject == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, SubjectConstants.RequestedSubjectError);
+                goto EnterSubjectId;
+            }
+        EnterGrade: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterGrade);
+            double.TryParse(Console.ReadLine(), out double grade);
+            if (grade < 0 || grade > 100)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                goto EnterGrade;
+            }
+            StudentGrade studentGrade = new()
+            {
+                Grade = grade,
+                Student = student,
+                Subject = subject,
+                CreatedDate = DateTime.Now
+            };
+            await _studentGradeRepository.AddAsync(studentGrade);
+            student.Grades.Add(studentGrade);
+        }
+        public async Task GetStudentGradesAsync()
+        {
+        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+            int.TryParse(Console.ReadLine(), out int studentId);
+            Student student = await _studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+            {
+                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                goto EnterStudentId;
+            }
+            ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
+            ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x=>x.Student == student).ToList();
+            
+            var t = new TablePrinter("Id", "Student Name", "Subject Name", "Grade" );
+            foreach (var item in filteredStudentGrades)
+            {
+                t.AddRow(item.Id, item.Student.Name, item.Subject.Name, item.Grade);
+            }
+            t.Print();
         }
 
         public async Task UpdateAsync()

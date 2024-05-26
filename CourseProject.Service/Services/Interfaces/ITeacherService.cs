@@ -8,5 +8,6 @@ namespace CourseProject.Service.Services.Interfaces
 {
     public interface ITeacherService : IService 
     {
+        public Task AddTeacherGroupsAsync();
     }
 }

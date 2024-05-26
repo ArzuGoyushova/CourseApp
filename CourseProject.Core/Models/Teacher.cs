@@ -9,6 +9,6 @@ namespace CourseProject.Core.Models
 {
     public class Teacher : Person
     {
-        public List<TeacherGroup>? TeacherGroups { get; set; }
+        public List<TeacherGroup>? TeacherGroups { get; set; } = new List<TeacherGroup>();
     }
 }
