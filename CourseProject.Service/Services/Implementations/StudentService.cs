@@ -29,110 +29,136 @@ namespace CourseProject.Service.Services.Implementations
         }
         public async Task AddAsync()
         {
-            Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterName);
-        validName: string name = Console.ReadLine();
-            if (String.IsNullOrEmpty(name))
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                goto validName;
+                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterName);
+            validName: string name = Console.ReadLine();
+                if (String.IsNullOrEmpty(name))
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                    goto validName;
+                }
+                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterSurName);
+            validSurname: string surname = Console.ReadLine();
+                if (String.IsNullOrEmpty(surname))
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                    goto validSurname;
+                }
+
+                Helper.HelperMessage(ConsoleColor.Magenta, "Enter student's birthday in format MM/DD/YYYY: ");
+                validDate: string input = Console.ReadLine();
+                DateTime birthday;
+
+                if (!DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
+                {
+                    Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
+                    goto validDate;
+                }
+
+                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterFinCode);
+            validfinCode: string fincode = Console.ReadLine();
+                if (String.IsNullOrEmpty(fincode) || fincode.Length != 7)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                    goto validfinCode;
+                }
+
+                Helper.HelperMessage(ConsoleColor.Magenta, "Enter group Id: ");
+            EnterGroupId: int.TryParse(Console.ReadLine(), out int groupId);
+                Group group = await _groupRepository.GetByIdAsync(groupId);
+                if (group == null)
+                {
+                    Console.WriteLine("There is no such a group with entered id.");
+                    goto EnterGroupId;
+                }
+
+                Student student = new()
+                {
+                    Name = name,
+                    Surname = surname,
+                    Birthday = birthday,
+                    FinCode = fincode,
+                    Group = group,
+                    CreatedDate = DateTime.Now,
+                };
+                await _studentRepository.AddAsync(student);
+
+                group.Students.Add(student);
+
+                Helper.HelperMessage(ConsoleColor.Green, $"{name} " + StudentConstants.SuccesfullyCreated);
             }
-            Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterSurName);
-        validSurname: string surname = Console.ReadLine();
-            if (String.IsNullOrEmpty(surname))
+            catch (Exception ex)
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                goto validSurname;
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
-
-            Helper.HelperMessage(ConsoleColor.Magenta, "Enter student's birthday in format MM/DD/YYYY: ");
-            string input = Console.ReadLine();
-            DateTime birthday;
-
-            if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
-            {
-            }
-            else
-            {
-                Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
-            }
-
-            Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterFinCode);
-        validfinCode: string fincode = Console.ReadLine();
-            if (String.IsNullOrEmpty(fincode) || fincode.Length!=7)
-            {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                goto validfinCode;
-            }
-
-            Helper.HelperMessage(ConsoleColor.Magenta, "Enter group Id: ");
-            EnterGroupId:  int.TryParse(Console.ReadLine(), out int groupId);
-            Group group = await _groupRepository.GetByIdAsync(groupId);
-            if (group == null)
-            {
-                Console.WriteLine("There is no such a group with entered id.");
-                goto EnterGroupId;
-            }
-
-            Student student = new()
-            {
-                Name = name,
-                Surname = surname,
-                Birthday = birthday,
-                FinCode = fincode,
-                Group = group,
-                CreatedDate = DateTime.Now,
-            };
-            await _studentRepository.AddAsync(student);
-
-            group.Students.Add(student);
-
-            Helper.HelperMessage(ConsoleColor.Green, $"{name} " + StudentConstants.SuccesfullyCreated);
         }
 
         public async Task DeleteAsync()
         {
-            Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-        EnterId: int.TryParse(Console.ReadLine(), out int id);
+            try
+            {
+                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+            EnterId: int.TryParse(Console.ReadLine(), out int id);
 
-            if (await _studentRepository.GetByIdAsync(id) == null)
-            {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
-                goto EnterId;
+                if (await _studentRepository.GetByIdAsync(id) == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                    goto EnterId;
+                }
+                else
+                {
+                    await _studentRepository.DeleteAsync(id);
+                    Helper.HelperMessage(ConsoleColor.Green, StudentConstants.SuccesfullyDeleted);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await _studentRepository.DeleteAsync(id);
-                Helper.HelperMessage(ConsoleColor.Green, StudentConstants.SuccesfullyDeleted);
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
 
         public async Task GetAllAsync()
         {
-            var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Group Name", "Fincode");
-
-            foreach (var student in await _studentRepository.GetAllAsync())
+            try
             {
-                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
+                var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Group Name", "Fincode");
+
+                foreach (var student in await _studentRepository.GetAllAsync())
+                {
+                    t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
+                }
+                t.Print();
             }
-            t.Print();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
 
         public async Task GetAsync()
         {
-        EnterIdNumber: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int id);
-            Student student = await _studentRepository.GetByIdAsync(id);
-            if (student == null)
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
-                goto EnterIdNumber;
+            EnterIdNumber: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int id);
+                Student student = await _studentRepository.GetByIdAsync(id);
+                if (student == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                    goto EnterIdNumber;
+                }
+                else
+                {
+                    Helper.HelperMessage(ConsoleColor.Green, StudentConstants.RequestedStudent);
+                    var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Group Name", "Fincode");
+                    t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
+                    t.Print();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Helper.HelperMessage(ConsoleColor.Green, StudentConstants.RequestedStudent);
-                var t = new TablePrinter("Id", "Name", "Surname", "Birthday", "Group Name", "Fincode");
-                t.AddRow(student.Id, student.Name, student.Surname, student.Birthday.ToString("dd-MM-yyyy"), student.Group.Name, student.FinCode);
-                t.Print();
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
 
         }
@@ -233,9 +259,16 @@ namespace CourseProject.Service.Services.Implementations
                     Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
                     goto validSurname;
                 }
-                DateTime birthday;
                 Helper.HelperMessage(ConsoleColor.Magenta, "Enter student's birthday in format MM/DD/YYYY: ");
-                birthday = DateTime.Parse(Console.ReadLine());
+            validDate: string input = Console.ReadLine();
+                DateTime birthday;
+
+                if (!DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
+                {
+                    Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
+                    goto validDate;
+                }
+
                 Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterFinCode);
             validfinCode: string fincode = Console.ReadLine();
                 if (String.IsNullOrEmpty(fincode))

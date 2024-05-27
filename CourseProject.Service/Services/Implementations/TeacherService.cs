@@ -42,7 +42,7 @@ namespace CourseProject.Service.Services.Implementations
             }
 
             Helper.HelperMessage(ConsoleColor.Magenta, "Enter teacher's birthday in format MM/DD/YYYY: ");
-            string input = Console.ReadLine();
+            validDate:  string input = Console.ReadLine();
             DateTime birthday;
 
             if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
@@ -51,6 +51,7 @@ namespace CourseProject.Service.Services.Implementations
             else
             {
                 Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
+                goto validDate;
             }
 
             Helper.HelperMessage(ConsoleColor.Magenta, TeacherConstants.EnterFinCode);
@@ -171,9 +172,20 @@ namespace CourseProject.Service.Services.Implementations
                     Helper.HelperMessage(ConsoleColor.Red, TeacherConstants.TypoMessage);
                     goto validSurname;
                 }
-                DateTime birthday;
+
                 Helper.HelperMessage(ConsoleColor.Magenta, "Enter teacher's birthday in format MM/DD/YYYY: ");
-                birthday = DateTime.Parse(Console.ReadLine());
+            validDate: string input = Console.ReadLine();
+                DateTime birthday;
+
+                if (DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
+                {
+                }
+                else
+                {
+                    Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
+                    goto validDate;
+                }
+
                 Helper.HelperMessage(ConsoleColor.Magenta, TeacherConstants.EnterFinCode);
             validfinCode: string fincode = Console.ReadLine();
                 if (String.IsNullOrEmpty(fincode))

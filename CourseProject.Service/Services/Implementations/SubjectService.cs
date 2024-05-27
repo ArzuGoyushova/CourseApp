@@ -31,7 +31,7 @@ namespace CourseProject.Service.Services.Implementations
             }
 
             Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.EnterType);
-            Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.SubjectTypes);
+            Helper.HelperMessage(ConsoleColor.Cyan, SubjectConstants.SubjectTypes);
             int.TryParse(Console.ReadLine(), out int type);
 
             await _subjectRepository.AddAsync(new()
@@ -109,7 +109,7 @@ namespace CourseProject.Service.Services.Implementations
                 }
 
                 Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.EnterType);
-                Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.SubjectTypes);
+                Helper.HelperMessage(ConsoleColor.Cyan, SubjectConstants.SubjectTypes);
                 int.TryParse(Console.ReadLine(), out int type);
 
                 updatedSubject.Name = name;
