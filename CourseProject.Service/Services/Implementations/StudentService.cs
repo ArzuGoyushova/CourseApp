@@ -164,134 +164,162 @@ namespace CourseProject.Service.Services.Implementations
         }
         public async Task AddStudentGradesAsync()
         {
-        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int studentId);
-            Student student = await _studentRepository.GetByIdAsync(studentId);
-            if (student == null)
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
-                goto EnterStudentId;
+            EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int studentId);
+                Student student = await _studentRepository.GetByIdAsync(studentId);
+                if (student == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                    goto EnterStudentId;
+                }
+            EnterSubjectId: Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int subjectId);
+                Subject subject = await _subjectRepository.GetByIdAsync(subjectId);
+                if (subject == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, SubjectConstants.RequestedSubjectError);
+                    goto EnterSubjectId;
+                }
+            EnterGrade: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterGrade);
+                double.TryParse(Console.ReadLine(), out double grade);
+                if (grade < 0 || grade > 100)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                    goto EnterGrade;
+                }
+                StudentGrade studentGrade = new()
+                {
+                    Grade = grade,
+                    Student = student,
+                    Subject = subject,
+                    CreatedDate = DateTime.Now
+                };
+                await _studentGradeRepository.AddAsync(studentGrade);
+                student.Grades.Add(studentGrade);
+                Helper.HelperMessage(ConsoleColor.Green, StudentConstants.GradesAdded);
             }
-        EnterSubjectId: Helper.HelperMessage(ConsoleColor.Magenta, SubjectConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int subjectId);
-            Subject subject = await _subjectRepository.GetByIdAsync(subjectId);
-            if (subject == null)
+            catch (Exception ex)
             {
-                Helper.HelperMessage(ConsoleColor.Red, SubjectConstants.RequestedSubjectError);
-                goto EnterSubjectId;
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
-        EnterGrade: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterGrade);
-            double.TryParse(Console.ReadLine(), out double grade);
-            if (grade < 0 || grade > 100)
-            {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                goto EnterGrade;
-            }
-            StudentGrade studentGrade = new()
-            {
-                Grade = grade,
-                Student = student,
-                Subject = subject,
-                CreatedDate = DateTime.Now
-            };
-            await _studentGradeRepository.AddAsync(studentGrade);
-            student.Grades.Add(studentGrade);
-            Helper.HelperMessage(ConsoleColor.Green, StudentConstants.GradesAdded);
         }
         public async Task GetStudentGradesAsync()
         {
-        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int studentId);
-            Student student = await _studentRepository.GetByIdAsync(studentId);
-            if (student == null)
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
-                goto EnterStudentId;
+            EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int studentId);
+                Student student = await _studentRepository.GetByIdAsync(studentId);
+                if (student == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                    goto EnterStudentId;
+                }
+                ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
+                ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x => x.Student == student).ToList();
+
+                var t = new TablePrinter("Id", "Student Name", "Subject Name", "Grade");
+                foreach (var item in filteredStudentGrades)
+                {
+                    t.AddRow(item.Id, item.Student.Name, item.Subject.Name, item.Grade);
+                }
+                t.Print();
             }
-            ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
-            ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x=>x.Student == student).ToList();
-            
-            var t = new TablePrinter("Id", "Student Name", "Subject Name", "Grade" );
-            foreach (var item in filteredStudentGrades)
+            catch (Exception ex)
             {
-                t.AddRow(item.Id, item.Student.Name, item.Subject.Name, item.Grade);
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
-            t.Print();
         }
         public async Task GetStudentGPAAsync()
         {
-        EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int studentId);
-            Student student = await _studentRepository.GetByIdAsync(studentId);
-            if (student == null)
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
-                goto EnterStudentId;
-            }
-            ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
-            ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x => x.Student == student).ToList();
-            double gpa = filteredStudentGrades.Average(x => x.Grade);
-            
-            var t = new TablePrinter("Student Id", "Student Name", "GPA");
+            EnterStudentId: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int studentId);
+                Student student = await _studentRepository.GetByIdAsync(studentId);
+                if (student == null)
+                {
+                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.RequestedStudentError);
+                    goto EnterStudentId;
+                }
+                ICollection<StudentGrade> studentGrades = await _studentGradeRepository.GetAllAsync();
+                ICollection<StudentGrade> filteredStudentGrades = studentGrades.Where(x => x.Student == student).ToList();
+                double gpa = filteredStudentGrades.Average(x => x.Grade);
 
-            t.AddRow(student.Id, student.Name, gpa);
-            
-            t.Print();
+                var t = new TablePrinter("Student Id", "Student Name", "GPA");
+
+                t.AddRow(student.Id, student.Name, gpa);
+
+                t.Print();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
         public async Task UpdateAsync()
         {
-        EnterIdNumber: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
-            int.TryParse(Console.ReadLine(), out int id);
-            Student updatedStudent = await _studentRepository.GetByIdAsync(id);
-            if (updatedStudent != null)
+            try
             {
-                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterName);
-            validName: string name = Console.ReadLine();
-                if (String.IsNullOrEmpty(name))
+            EnterIdNumber: Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterIdNumber);
+                int.TryParse(Console.ReadLine(), out int id);
+                Student updatedStudent = await _studentRepository.GetByIdAsync(id);
+                if (updatedStudent != null)
                 {
-                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                    goto validName;
-                }
-                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterSurName);
-            validSurname: string surname = Console.ReadLine();
-                if (String.IsNullOrEmpty(surname))
-                {
-                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                    goto validSurname;
-                }
-                Helper.HelperMessage(ConsoleColor.Magenta, "Enter student's birthday in format MM/DD/YYYY: ");
-            validDate: string input = Console.ReadLine();
-                DateTime birthday;
+                    Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterName);
+                validName: string name = Console.ReadLine();
+                    if (String.IsNullOrEmpty(name))
+                    {
+                        Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                        goto validName;
+                    }
+                    Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterSurName);
+                validSurname: string surname = Console.ReadLine();
+                    if (String.IsNullOrEmpty(surname))
+                    {
+                        Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                        goto validSurname;
+                    }
+                    Helper.HelperMessage(ConsoleColor.Magenta, "Enter student's birthday in format MM/DD/YYYY: ");
+                validDate: string input = Console.ReadLine();
+                    DateTime birthday;
 
-                if (!DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
-                {
-                    Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
-                    goto validDate;
-                }
+                    if (!DateTime.TryParseExact(input, "MM/dd/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthday))
+                    {
+                        Console.WriteLine("Invalid date format. Please enter the date in MM/DD/YYYY format.");
+                        goto validDate;
+                    }
 
-                Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterFinCode);
-            validfinCode: string fincode = Console.ReadLine();
-                if (String.IsNullOrEmpty(fincode))
-                {
-                    Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
-                    goto validfinCode;
-                }
-                Helper.HelperMessage(ConsoleColor.Magenta, "Enter group Id: ");
-            EnterGroupId: int.TryParse(Console.ReadLine(), out int groupId);
-                Group group = await _groupRepository.GetByIdAsync(groupId);
-                if (group == null)
-                {
-                    Console.WriteLine("Bu Id-e uygun qrup yoxdur.");
-                    goto EnterGroupId;
-                }
+                    Helper.HelperMessage(ConsoleColor.Magenta, StudentConstants.EnterFinCode);
+                validfinCode: string fincode = Console.ReadLine();
+                    if (String.IsNullOrEmpty(fincode))
+                    {
+                        Helper.HelperMessage(ConsoleColor.Red, StudentConstants.TypoMessage);
+                        goto validfinCode;
+                    }
+                    Helper.HelperMessage(ConsoleColor.Magenta, "Enter group Id: ");
+                EnterGroupId: int.TryParse(Console.ReadLine(), out int groupId);
+                    Group group = await _groupRepository.GetByIdAsync(groupId);
+                    if (group == null)
+                    {
+                        Console.WriteLine("There is no group with the entered Id.");
+                        goto EnterGroupId;
+                    }
 
-                updatedStudent.Name = name;
-                updatedStudent.Surname = surname;
-                updatedStudent.Birthday = birthday;
-                updatedStudent.FinCode = fincode;
-                updatedStudent.Group = group;
-                updatedStudent.UpdatedDate = DateTime.Now;
-                await _studentRepository.UpdateAsync(updatedStudent);
+                    updatedStudent.Name = name;
+                    updatedStudent.Surname = surname;
+                    updatedStudent.Birthday = birthday;
+                    updatedStudent.FinCode = fincode;
+                    updatedStudent.Group = group;
+                    updatedStudent.UpdatedDate = DateTime.Now;
+                    await _studentRepository.UpdateAsync(updatedStudent);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
     }
